@@ -8,5 +8,6 @@
 *.bz2
 *.xz
 *.tgz
-*/train_data
-*/train-data
+train_data/
+train-data/
+data/
