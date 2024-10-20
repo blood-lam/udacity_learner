@@ -1,0 +1,26 @@
+[ec2-user@ip-10-2-10-227 ~]$ mysql -h udacity-db-secondary-standby.cvfl1ttsqrii.us-west-2.rds.amazonaws.com -P 3306 -u udacityPrimary -p udacity
+Enter password: 
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 35
+Server version: 8.0.39 Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [udacity]> INSERT INTO pet (name, owner, species, sex, birth, death) VALUES
+    -> ('Demo', 'Example', 'cat', 'f', '1993-02-04', NULL);
+Query OK, 1 row affected (0.004 sec)
+
+MySQL [udacity]> SELECT * FROM pet WHERE name='Demo';
++------+---------+---------+------+------------+-------+
+| name | owner   | species | sex  | birth      | death |
++------+---------+---------+------+------------+-------+
+| Demo | Example | cat     | f    | 1993-02-04 | NULL  |
++------+---------+---------+------+------------+-------+
+1 row in set (0.001 sec)
+
+MySQL [udacity]> 

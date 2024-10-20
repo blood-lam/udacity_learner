@@ -1,0 +1,7 @@
+The achievable Recovery Time Objective (RTO) for this Multi-AZ, multi-region database is as follows:
+- Minimum RTO for a single AZ outage: under 1 minute
+- Minimum RTO for a single region outage: 5 to 10 minutes
+
+The achievable Recovery Point Objective (RPO) for this Multi-AZ, multi-region database is as follows:
+- Minimum RPO for a single AZ outage: a few seconds to a minute
+- Minimum RPO for a single region outage: 5 to 10 minutes

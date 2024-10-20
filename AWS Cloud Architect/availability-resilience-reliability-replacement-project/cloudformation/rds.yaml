@@ -1,0 +1,79 @@
+Parameters:
+  VpcName:
+    Type: String
+    Default: Primary
+    AllowedValues:
+      - Primary
+      - Secondary
+    ConstraintDescription: Must be either 'Primary' or 'Secondary'
+
+Conditions:
+  IsPrimaryVPC: !Equals [ !Ref VpcName, "Primary" ]
+  IsSecondaryVPC: !Equals [ !Ref VpcName, "Secondary" ]
+
+Resources:
+  RDSInstanceSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub 'rds-subnet-group-${VpcName}'
+      DBSubnetGroupDescription: !Sub 'Subnet group for RDS instances in ${VpcName}'
+      SubnetIds: !Split
+          - ", "
+          - Fn::ImportValue: !Sub "${VpcName}-Private-Subnets"
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Condition: IsPrimaryVPC
+    Properties:
+      DBInstanceIdentifier: !Sub 'udacity-db-${VpcName}'
+      DBInstanceClass: db.t3.micro
+      Engine: mysql
+      DBName: udacity
+      MasterUsername: !Sub 'udacity${VpcName}'
+      MasterUserPassword: !Sub 'udacity${VpcName}!'  # Consider using a secure method
+      AllocatedStorage: 5
+      VPCSecurityGroups:
+        - Fn::ImportValue: !Sub "${VpcName}-Database-Security-Group"  # Importing database security group
+      DBSubnetGroupName: !Ref RDSInstanceSubnetGroup
+      MultiAZ: true  # Enabling multi-AZ deployment for high availability
+      Tags:
+        - Key: Name
+          Value: !Sub 'Udacity ${VpcName} Database'
+
+  StandbyRDSInstance:
+    Type: AWS::RDS::DBInstance
+    Condition: IsSecondaryVPC
+    Properties:
+      DBInstanceIdentifier: !Sub 'udacity-db-${VpcName}-standby'
+      DBInstanceClass: db.t3.micro
+      Engine: mysql
+      DBName: udacity
+      MasterUsername: !Sub 'udacity${VpcName}'
+      MasterUserPassword: !Sub 'udacity${VpcName}!'  # Consider using a secure method
+      AllocatedStorage: 5
+      VPCSecurityGroups:
+        - Fn::ImportValue: !Sub "${VpcName}-Database-Security-Group"  # Importing database security group
+      DBSubnetGroupName: !Ref RDSInstanceSubnetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'Udacity ${VpcName} Standby Database'
+      SourceRegion: us-east-1
+      SourceDBInstanceIdentifier: arn:aws:rds:us-east-1:554125819836:db:udacity-db-primary
+
+Outputs:
+  RDSInstance:
+    Description: RDS instance ID
+    Value: !Ref RDSInstance
+    Condition: IsPrimaryVPC
+  RDSInstanceARN:
+    Description: RDS instance ARN
+    Value: !GetAtt RDSInstance.DBInstanceArn
+    Condition: IsPrimaryVPC
+  StandbyRDSInstance:
+    Description: Standby RDS instance ID
+    Value: !Ref StandbyRDSInstance
+    Condition: IsSecondaryVPC
+  StandbyRDSInstanceARN:
+    Description: Standby RDS instance ARN
+    Value: !GetAtt StandbyRDSInstance.DBInstanceArn
+    Condition: IsSecondaryVPC

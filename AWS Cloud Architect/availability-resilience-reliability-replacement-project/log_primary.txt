@@ -1,0 +1,32 @@
+mysql -h udacity-db-primary.cf8yu5kg9nte.us-east-1.rds.amazonaws.com -P 3306 -u udacityPrimary -p udacity
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 64
+Server version: 8.0.39 Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [udacity]> CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+Query OK, 0 rows affected (0.083 sec)
+
+MySQL [udacity]> INSERT INTO pet (name, owner, species, sex, birth, death) VALUES
+    -> ('Fluffy', 'Harold', 'cat', 'f', '1993-02-04', NULL),
+    -> ('Claws', 'Gwen', 'cat', 'm', '1994-03-17', NULL),
+    -> ('Buffy', 'Harold', 'dog', 'f', '1989-05-13', NULL),
+    -> ('Fang', 'Benny', 'dog', 'm', '1990-08-27', NULL),
+    -> ('Bowser', 'Diane', 'dog', 'm', '1979-08-31', '1995-07-29'),
+    -> ('Chirpy', 'Gwen', 'bird', 'f', '1998-09-11', NULL),
+    -> ('Whistler', 'Gwen', 'bird', NULL, '1997-12-09', NULL),
+    -> ('Slim', 'Benny', 'snake', 'm', '1996-04-29', NULL);
+Query OK, 8 rows affected (0.013 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+MySQL [udacity]> SELECT * FROM pet WHERE name='Fluffy';
++--------+--------+---------+------+------------+-------+
+| name   | owner  | species | sex  | birth      | death |
++--------+--------+---------+------+------------+-------+
+| Fluffy | Harold | cat     | f    | 1993-02-04 | NULL  |
++--------+--------+---------+------+------------+-------+
+1 row in set (0.001 sec)

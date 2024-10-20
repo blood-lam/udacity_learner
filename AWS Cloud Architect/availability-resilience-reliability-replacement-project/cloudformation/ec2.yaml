@@ -1,0 +1,35 @@
+Parameters:
+  VpcName:
+    Type: String
+    Default: Primary
+    AllowedValues:
+      - Primary
+      - Secondary
+    ConstraintDescription: Must be either 'Primary' or 'Secondary'
+  AmiId:
+    Type: String
+    Default: ami-06b21ccaeff8cd686
+    AllowedValues:
+      - ami-06b21ccaeff8cd686
+      - ami-07c5ecd8498c59db5
+    ConstraintDescription: Must be one of the specified AMI IDs
+
+Resources:
+  EC2KeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: !Sub 'ec2-key-pair-${AWS::Region}'
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmiId
+      InstanceType: t2.micro
+      KeyName: !Ref EC2KeyPair
+      SecurityGroupIds: [Fn::ImportValue: !Sub "${VpcName}-Application-Security-Group"]
+      SubnetId: !Select
+        - 0
+        - !Split
+          - ", "
+          - Fn::ImportValue: !Sub "${VpcName}-Public-Subnets"
+
