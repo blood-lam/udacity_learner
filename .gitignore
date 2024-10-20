@@ -1,0 +1,12 @@
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
+*.gz
+*.bz2
+*.xz
+*.tgz
+*/train_data
+*/train-data
